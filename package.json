@@ -1,0 +1,7 @@
+{
+  "name": "canvas-hub-vercel",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Canvas LMS dashboard wrapper for Vercel",
+  "scripts": {}
+}

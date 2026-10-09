@@ -1,46 +1,67 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="theme-color" content="#111827" />
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#10111b">
   <title>Canvas Hub</title>
-  <link rel="stylesheet" href="/style.css" />
+  <link rel="stylesheet" href="/style.css">
 </head>
 <body>
   <div class="app-shell">
     <aside class="sidebar">
-      <a class="brand" href="#home" aria-label="Canvas Hub home"><span class="brand-mark">C</span><span>Canvas <small>HUB</small></span></a>
-      <div class="side-label">WORKSPACE</div>
-      <nav>
-        <a class="nav-link active" href="#home"><span>▦</span> Overview</a>
-        <button class="nav-link" data-route="courses"><span>▤</span> My courses</button>
-        <button class="nav-link" data-route="assignments"><span>✓</span> Assignments</button>
-        <button class="nav-link" data-route="grades"><span>▥</span> Grades</button>
-        <button class="nav-link" data-route="calendar"><span>▦</span> Calendar</button>
-      </nav>
-      <div class="sidebar-bottom"><div class="connection-dot"></div><span>Connects to your school's Canvas</span></div>
+      <div class="brand"><div class="brand-mark">C</div><div><strong>Canvas Hub</strong><small>YOUR LEARNING SPACE</small></div></div>
+      <div class="nav-label">WORKSPACE</div>
+      <button class="nav-item active" data-view="overview"><span>⌂</span> Overview</button>
+      <button class="nav-item" data-view="courses"><span>▦</span> Courses</button>
+      <button class="nav-item" data-view="assignments"><span>✓</span> Assignments <i id="assignment-count"></i></button>
+      <button class="nav-item" data-view="grades"><span>▤</span> Grades</button>
+      <button class="nav-item" data-view="announcements"><span>◉</span> Announcements</button>
+      <div class="sidebar-bottom">
+        <div class="connection-indicator"><span id="status-dot"></span><div><strong id="connection-label">Not connected</strong><small id="connection-sub">Connect your Canvas account</small></div></div>
+        <button class="nav-item" id="settings-open"><span>⚙</span> Connection & settings</button>
+      </div>
     </aside>
-
-    <main class="main-content" id="home">
-      <header class="topbar"><div><div class="eyebrow">YOUR LEARNING SPACE</div><h1>Good to see you.</h1></div><button class="icon-button" id="openCanvas" title="Open Canvas">↗</button></header>
-      <section class="welcome-card">
-        <div class="welcome-copy"><span class="pill">CANVAS LMS WRAPPER</span><h2>Schoolwork, <em>one place.</em></h2><p>A simple launchpad for your Canvas courses, assignments, grades, and calendar.</p><button class="primary-button" id="launchCanvas">Open Canvas <span>↗</span></button></div>
-        <div class="welcome-art" aria-hidden="true"><div class="art-ring ring-one"></div><div class="art-ring ring-two"></div><div class="art-card"><div class="art-top"><span></span><span></span><span></span></div><div class="art-line long"></div><div class="art-line medium"></div><div class="art-check">✓</div><div class="art-line short"></div></div><div class="floating-dot"></div></div>
+    <main class="main">
+      <header class="topbar">
+        <div><div class="eyebrow" id="eyebrow">YOUR SCHOOL, AT A GLANCE</div><h1 id="page-title">Good to see you.</h1></div>
+        <div class="top-actions"><button class="icon-btn" id="theme-toggle" title="Toggle theme" aria-label="Toggle theme">☼</button><button class="avatar" id="profile-avatar">?</button></div>
+      </header>
+      <section id="connect-banner" class="connect-banner">
+        <div class="banner-icon">✦</div><div class="banner-copy"><strong>Connect your Canvas account</strong><p>Use your school's Canvas URL and a Canvas API access token to load your courses, grades, and assignments.</p></div>
+        <button class="primary-btn" id="connect-open">Connect Canvas <span>↗</span></button>
       </section>
-
-      <section class="section-heading"><div><div class="eyebrow">QUICK ACCESS</div><h2>Jump back in</h2></div><span class="subtle">Opens in Canvas</span></section>
-      <section class="quick-grid">
-        <button class="quick-card" data-route="courses"><span class="quick-icon purple">▤</span><span class="quick-title">Courses</span><span class="quick-desc">Your classes and modules</span><span class="card-arrow">↗</span></button>
-        <button class="quick-card" data-route="assignments"><span class="quick-icon orange">✓</span><span class="quick-title">Assignments</span><span class="quick-desc">Tasks and submissions</span><span class="card-arrow">↗</span></button>
-        <button class="quick-card" data-route="grades"><span class="quick-icon green">▥</span><span class="quick-title">Grades</span><span class="quick-desc">Feedback and scores</span><span class="card-arrow">↗</span></button>
-        <button class="quick-card" data-route="calendar"><span class="quick-icon blue">▦</span><span class="quick-title">Calendar</span><span class="quick-desc">Dates and due work</span><span class="card-arrow">↗</span></button>
+      <div id="alert" class="alert hidden" role="status"></div>
+      <section id="overview-view" class="view">
+        <div class="welcome-row"><div><h2 id="welcome-name">Your semester, organized.</h2><p>Everything you need to stay on top of class.</p></div><div class="date-pill" id="today-date"></div></div>
+        <div class="stats-grid">
+          <article class="stat-card"><div class="stat-top"><span>Active courses</span><span class="stat-icon violet">▦</span></div><strong id="stat-courses">—</strong><small>Current enrollments</small></article>
+          <article class="stat-card"><div class="stat-top"><span>Upcoming assignments</span><span class="stat-icon blue">✓</span></div><strong id="stat-assignments">—</strong><small>Not yet past due</small></article>
+          <article class="stat-card"><div class="stat-top"><span>Courses with grades</span><span class="stat-icon green">↗</span></div><strong id="stat-graded">—</strong><small>Grade data available</small></article>
+          <article class="stat-card"><div class="stat-top"><span>Announcements</span><span class="stat-icon amber">◉</span></div><strong id="stat-announcements">—</strong><small>Recent course updates</small></article>
+        </div>
+        <div class="content-grid">
+          <section class="panel"><div class="panel-heading"><div><h3>Upcoming assignments</h3><p>What’s next on your list</p></div><button class="text-btn" data-goto="assignments">View all →</button></div><div id="overview-assignments" class="list-stack"><div class="empty-state">Connect Canvas to load your assignments.</div></div></section>
+          <section class="panel"><div class="panel-heading"><div><h3>Your courses</h3><p>Jump back into a class</p></div><button class="text-btn" data-goto="courses">View all →</button></div><div id="overview-courses" class="course-mini-grid"><div class="empty-state">Your courses will appear here.</div></div></section>
+        </div>
+        <section class="panel announcements-panel"><div class="panel-heading"><div><h3>Latest announcements</h3><p>Updates from your instructors</p></div><button class="text-btn" data-goto="announcements">View all →</button></div><div id="overview-announcements" class="list-stack"><div class="empty-state">Recent announcements will appear here.</div></div></section>
       </section>
-
-      <section class="settings-card" id="settings"><div class="settings-icon">⚙</div><div class="settings-copy"><h3>Connect your school</h3><p>Enter your school's Canvas address. This is saved only in this browser.</p><label for="canvasUrl">Canvas URL</label><div class="url-row"><input id="canvasUrl" type="url" placeholder="https://school.instructure.com" autocomplete="url" /><button class="save-button" id="saveUrl">Save</button></div><p class="hint" id="status" aria-live="polite">No Canvas address saved yet.</p></div></section>
-      <footer>Canvas Hub is an independent launcher and is not affiliated with Instructure. Your school's Canvas login and permissions still apply.</footer>
+      <section id="courses-view" class="view hidden"><div class="section-intro"><h2>Your courses</h2><p>All of your active Canvas classes in one place.</p></div><div id="courses-grid" class="courses-grid"><div class="empty-state">Connect Canvas to see your courses.</div></div></section>
+      <section id="assignments-view" class="view hidden"><div class="section-intro"><h2>Assignments</h2><p>Upcoming work from across your courses.</p></div><div class="filter-row"><input id="assignment-search" type="search" placeholder="Search assignments…"><select id="assignment-filter"><option value="upcoming">Upcoming & due soon</option><option value="all">All loaded assignments</option><option value="past">Past due</option></select></div><div id="assignments-list" class="list-stack panel"><div class="empty-state">Connect Canvas to see assignments.</div></div></section>
+      <section id="grades-view" class="view hidden"><div class="section-intro"><h2>Grades</h2><p>Your current grade information from Canvas.</p></div><div id="grades-grid" class="grades-grid"><div class="empty-state">Connect Canvas to load grades.</div></div><p class="fine-print">Grades are shown exactly as returned by your school's Canvas system. Some courses may not publish a current grade.</p></section>
+      <section id="announcements-view" class="view hidden"><div class="section-intro"><h2>Announcements</h2><p>Recent news from your courses.</p></div><div id="announcements-list" class="list-stack panel"><div class="empty-state">Connect Canvas to load announcements.</div></div></section>
+      <footer><span>Canvas Hub</span><span>Independent interface · Uses the official Canvas API</span><button class="text-btn" id="footer-settings">Settings</button></footer>
     </main>
   </div>
-  <script src="/app.js"></script>
+  <dialog id="settings-dialog">
+    <form id="settings-form" method="dialog">
+      <div class="dialog-head"><div><div class="eyebrow">ACCOUNT CONNECTION</div><h2>Connect Canvas</h2><p>Connect directly to your school's Canvas instance.</p></div><button class="icon-btn" type="button" id="settings-close" aria-label="Close">×</button></div>
+      <label for="canvas-url">Canvas URL</label><input id="canvas-url" type="url" placeholder="https://school.instructure.com" autocomplete="url" required>
+      <label for="canvas-token">Canvas API access token</label><input id="canvas-token" type="password" placeholder="Paste your token" autocomplete="off" required>
+      <p class="help-text">The token is kept in this browser tab's session storage and sent to your Vercel API route to make official Canvas API requests. Never use this on a public/shared device. A school may disable personal tokens; use only access methods your school permits.</p>
+      <div class="dialog-actions"><button class="danger-btn" type="button" id="disconnect-btn">Disconnect</button><span class="spacer"></span><button class="secondary-btn" type="button" id="cancel-settings">Cancel</button><button class="primary-btn" type="submit" id="save-connect">Connect & load</button></div>
+    </form>
+  </dialog>
+  <script src="/app.js" defer></script>
 </body>
 </html>
