@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#111827" />
+  <title>Canvas Hub</title>
+  <link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <a class="brand" href="#home" aria-label="Canvas Hub home"><span class="brand-mark">C</span><span>Canvas <small>HUB</small></span></a>
+      <div class="side-label">WORKSPACE</div>
+      <nav>
+        <a class="nav-link active" href="#home"><span>▦</span> Overview</a>
+        <button class="nav-link" data-route="courses"><span>▤</span> My courses</button>
+        <button class="nav-link" data-route="assignments"><span>✓</span> Assignments</button>
+        <button class="nav-link" data-route="grades"><span>▥</span> Grades</button>
+        <button class="nav-link" data-route="calendar"><span>▦</span> Calendar</button>
+      </nav>
+      <div class="sidebar-bottom"><div class="connection-dot"></div><span>Connects to your school's Canvas</span></div>
+    </aside>
+
+    <main class="main-content" id="home">
+      <header class="topbar"><div><div class="eyebrow">YOUR LEARNING SPACE</div><h1>Good to see you.</h1></div><button class="icon-button" id="openCanvas" title="Open Canvas">↗</button></header>
+      <section class="welcome-card">
+        <div class="welcome-copy"><span class="pill">CANVAS LMS WRAPPER</span><h2>Schoolwork, <em>one place.</em></h2><p>A simple launchpad for your Canvas courses, assignments, grades, and calendar.</p><button class="primary-button" id="launchCanvas">Open Canvas <span>↗</span></button></div>
+        <div class="welcome-art" aria-hidden="true"><div class="art-ring ring-one"></div><div class="art-ring ring-two"></div><div class="art-card"><div class="art-top"><span></span><span></span><span></span></div><div class="art-line long"></div><div class="art-line medium"></div><div class="art-check">✓</div><div class="art-line short"></div></div><div class="floating-dot"></div></div>
+      </section>
+
+      <section class="section-heading"><div><div class="eyebrow">QUICK ACCESS</div><h2>Jump back in</h2></div><span class="subtle">Opens in Canvas</span></section>
+      <section class="quick-grid">
+        <button class="quick-card" data-route="courses"><span class="quick-icon purple">▤</span><span class="quick-title">Courses</span><span class="quick-desc">Your classes and modules</span><span class="card-arrow">↗</span></button>
+        <button class="quick-card" data-route="assignments"><span class="quick-icon orange">✓</span><span class="quick-title">Assignments</span><span class="quick-desc">Tasks and submissions</span><span class="card-arrow">↗</span></button>
+        <button class="quick-card" data-route="grades"><span class="quick-icon green">▥</span><span class="quick-title">Grades</span><span class="quick-desc">Feedback and scores</span><span class="card-arrow">↗</span></button>
+        <button class="quick-card" data-route="calendar"><span class="quick-icon blue">▦</span><span class="quick-title">Calendar</span><span class="quick-desc">Dates and due work</span><span class="card-arrow">↗</span></button>
+      </section>
+
+      <section class="settings-card" id="settings"><div class="settings-icon">⚙</div><div class="settings-copy"><h3>Connect your school</h3><p>Enter your school's Canvas address. This is saved only in this browser.</p><label for="canvasUrl">Canvas URL</label><div class="url-row"><input id="canvasUrl" type="url" placeholder="https://school.instructure.com" autocomplete="url" /><button class="save-button" id="saveUrl">Save</button></div><p class="hint" id="status" aria-live="polite">No Canvas address saved yet.</p></div></section>
+      <footer>Canvas Hub is an independent launcher and is not affiliated with Instructure. Your school's Canvas login and permissions still apply.</footer>
+    </main>
+  </div>
+  <script src="/app.js"></script>
+</body>
+</html>
