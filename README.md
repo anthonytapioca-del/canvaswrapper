@@ -4,12 +4,11 @@ Canvas Hub is a browser dashboard for Canvas LMS, with optional OAuth or a tab-s
 
 ## MMM-CanvasHub MagicMirror² module
 
-Install the **`MMM-CanvasHub`** module from the [`MMM-CanvasHub/` folder in this repository](https://github.com/anthonytapioca-del/canvaswrapper/tree/anthonytapioca-del-understand-codebase/MMM-CanvasHub). For the hosted-widget version currently deployed, run this on your MagicMirror device:
+Install the **`MMM-CanvasHub`** module from its [standalone GitHub repository](https://github.com/anthonytapioca-del/MMM-CanvasHub). For the hosted-widget version currently deployed, run this on your MagicMirror device:
 
 ```bash
 cd ~/MagicMirror/modules
-git clone --depth 1 --branch anthonytapioca-del-understand-codebase https://github.com/anthonytapioca-del/canvaswrapper.git /tmp/canvaswrapper
-cp -R /tmp/canvaswrapper/MMM-CanvasHub ./MMM-CanvasHub
+git clone https://github.com/anthonytapioca-del/MMM-CanvasHub.git
 ```
 
 Then:
