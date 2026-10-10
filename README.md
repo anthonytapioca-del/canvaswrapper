@@ -1,11 +1,14 @@
-# Canvas Hub UI Refresh
+# Canvas Hub
 
-This package refreshes the three supplied files with Lucide SVG icons and a gradient-rich responsive theme.
+Canvas Hub is a browser dashboard for Canvas LMS, with optional OAuth or a tab-scoped personal access token. It includes a MagicMirror² module that displays selected Canvas grades, missing assignments, and announcements.
 
-## Apply to your existing project
-1. Back up your current `index.html`, `app.js`, and `style.css`.
-2. Replace those files with the versions in this folder.
-3. Keep your existing `js/` directory and other project files. `app.js` imports existing helpers from `./js/` and those files were not included in the supplied set.
-4. The icons load from the Lucide CDN (`unpkg.com`), so the browser needs internet access to render them.
+## MMM-CanvasHub MagicMirror² module
 
-No Canvas API, authentication, or data-loading logic was intentionally redesigned.
+1. Copy the `MMM-CanvasHub` directory from this repository into your MagicMirror `modules` directory.
+2. In Canvas Hub, open **API & Developers → MagicMirror widget builder**.
+3. Enter your Canvas HTTPS URL and personal access token, choose the sections and position, then generate the config object.
+4. Paste the object into the `modules` array in `config/config.js` and restart MagicMirror.
+
+The generated config contains the access token in plain text on the MagicMirror device. Keep `config.js` private, do not publish it, and use a dedicated token that can be revoked. The token is sent directly from the MagicMirror server to Canvas over HTTPS; it is not sent to or stored by Canvas Hub. The module refreshes every 15 minutes and limits data loading to the first 30 active courses.
+
+The module requires a MagicMirror² version running on Node.js 18 or later (for built-in `fetch`). It uses Canvas endpoints for active courses, enrollment grades, submissions, and announcements according to the selected sections.
