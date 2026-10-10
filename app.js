@@ -665,6 +665,45 @@ function generatedLink() {
   return url.toString();
 }
 
+function generateMagicMirrorConfig() {
+  const origin = validHttpsOrigin($("mm-canvas-url").value);
+  const accessToken = $("mm-canvas-token").value.trim();
+  const error = $("mm-builder-error");
+  const showGrades = $("mm-show-grades").checked;
+  const showMissing = $("mm-show-missing").checked;
+  const showAnnouncements = $("mm-show-announcements").checked;
+  error.textContent = "";
+
+  if (!origin) {
+    error.textContent = "Enter a valid HTTPS Canvas URL.";
+    hideMagicMirrorConfig();
+    return;
+  }
+  if (!accessToken) {
+    error.textContent = "Enter your Canvas API access token.";
+    hideMagicMirrorConfig();
+    return;
+  }
+  if (!showGrades && !showMissing && !showAnnouncements) {
+    error.textContent = "Choose at least one type of Canvas data to display.";
+    hideMagicMirrorConfig();
+    return;
+  }
+
+  const config = {
+    module: "MMM-CanvasHub",
+    position: $("mm-position").value,
+    config: { canvasUrl: origin, accessToken, showGrades, showMissing, showAnnouncements }
+  };
+  $("mm-generated-code").textContent = JSON.stringify(config, null, 2);
+  $("mm-generated-wrap").classList.remove("hidden");
+}
+
+function hideMagicMirrorConfig() {
+  $("mm-generated-code").textContent = "";
+  $("mm-generated-wrap").classList.add("hidden");
+}
+
 function fillPrefsForm() {
   const p = state.prefs;
   $$(`#prefs-form [name=theme]`).forEach((r) => { r.checked = r.value === p.theme; });
@@ -785,6 +824,16 @@ $("announcement-search").addEventListener("input", debounce(renderAnnouncements)
 $("announcement-course").addEventListener("change", renderAnnouncements);
 $("gen-domain").addEventListener("input", generatedLink);
 $("gen-page").addEventListener("change", generatedLink);
+$("generate-mm-config").addEventListener("click", generateMagicMirrorConfig);
+$("copy-mm-config").addEventListener("click", async () => {
+  await navigator.clipboard.writeText($("mm-generated-code").textContent);
+  toast("MagicMirror config copied. Keep it private because it contains your token.", "ok");
+});
+$("mm-canvas-url").addEventListener("input", hideMagicMirrorConfig);
+$("mm-canvas-token").addEventListener("input", hideMagicMirrorConfig);
+["mm-show-grades", "mm-show-missing", "mm-show-announcements", "mm-position"].forEach((id) => {
+  $(id).addEventListener("change", hideMagicMirrorConfig);
+});
 $("copy-link").addEventListener("click", async () => {
   const link = generatedLink();
   if (!link) return;

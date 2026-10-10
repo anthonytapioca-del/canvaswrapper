@@ -219,6 +219,42 @@
             <span class="pill warn">Server-side examples — do not embed tokens in frontend code</span>
           </div>
           <div id="docs-list" class="docs-list"></div>
+          <section class="panel magicmirror-panel">
+            <h3>MagicMirror widget builder</h3>
+            <p class="help-text">Create a config entry for the MMM-CanvasHub module. The Canvas URL and token are included in the generated snippet so they stay on the MagicMirror device; they are not saved by Canvas Hub or placed in a URL.</p>
+            <label for="mm-canvas-url">Canvas URL</label>
+            <input id="mm-canvas-url" type="url" placeholder="https://school.instructure.com" autocomplete="url">
+            <label for="mm-canvas-token">Canvas API access token</label>
+            <input id="mm-canvas-token" type="password" placeholder="Paste your token" autocomplete="off">
+            <p class="help-text">The token will be readable in the local MagicMirror <code>config.js</code> after you paste the snippet. Use a dedicated token, keep that file private, and revoke the token if it is exposed.</p>
+            <fieldset class="widget-options">
+              <legend>Choose what the widget shows</legend>
+              <label><input type="checkbox" id="mm-show-grades" checked> Course grades</label>
+              <label><input type="checkbox" id="mm-show-missing" checked> Missing assignments</label>
+              <label><input type="checkbox" id="mm-show-announcements" checked> Announcements</label>
+            </fieldset>
+            <label for="mm-position">MagicMirror position</label>
+            <select id="mm-position">
+              <option value="top_right">Top right</option>
+              <option value="top_left">Top left</option>
+              <option value="top_center">Top center</option>
+              <option value="bottom_right">Bottom right</option>
+              <option value="bottom_left">Bottom left</option>
+              <option value="bottom_center">Bottom center</option>
+            </select>
+            <p class="help-text" id="mm-builder-error" role="status"></p>
+            <div class="dialog-actions">
+              <button class="primary-btn" id="generate-mm-config" type="button">Generate MagicMirror config</button>
+            </div>
+            <div id="mm-generated-wrap" class="hidden">
+              <p class="preview-label">Paste this object into the <code>modules</code> array in MagicMirror's <code>config/config.js</code>:</p>
+              <pre id="mm-generated-code" class="link-preview" tabindex="0"></pre>
+              <div class="dialog-actions">
+                <button class="secondary-btn" id="copy-mm-config" type="button">Copy config</button>
+              </div>
+            </div>
+            <p class="help-text">Install the <code>MMM-CanvasHub</code> folder from this repository into your MagicMirror's <code>modules</code> directory, add the generated object to your <code>modules</code> array, then restart MagicMirror.</p>
+          </section>
           <section class="panel generator-panel">
             <h3>Generate a personalized link</h3>
             <p class="help-text">This link only sets the Canvas domain and starting view. It never includes tokens, grades, or profile data. Each visitor still has to connect their own authorized account.</p>

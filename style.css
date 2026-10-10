@@ -259,6 +259,11 @@ textarea { width: 100%; min-height: 120px; resize: vertical; }
   background: var(--bg); border: 1px solid var(--border); border-radius: 10px;
   padding: 10px; overflow: auto; font-size: 12px; white-space: pre-wrap;
 }
+.magicmirror-panel { padding: 18px; margin: 18px 0; }
+.magicmirror-panel > input[type=url], .magicmirror-panel > input[type=password], .magicmirror-panel > select { width: 100%; }
+.widget-options { border: 1px solid var(--border); border-radius: 12px; margin: 12px 0; padding: 12px; }
+.widget-options label { display: inline-flex; align-items: center; gap: 7px; margin: 4px 16px 4px 0; }
+.magicmirror-panel #mm-generated-code { max-height: 360px; }
 .lang-tabs { display: flex; gap: 6px; margin: 10px 0; }
 .lang-tabs button { border: 1px solid var(--border); background: var(--surface2); border-radius: 8px; padding: 6px 10px; }
 .lang-tabs button.active { color: var(--accent); border-color: var(--accent); }
