@@ -160,7 +160,7 @@ function assignmentRow(a, { clickable = true } = {}) {
   const status = assignmentStatus(a);
   const tag = clickable ? "button" : "div";
   return `<${tag} class="list-row" type="button" data-assignment-id="${safeText(a.id)}" data-course-id="${safeText(a.course_id)}">
-    <div class="row-icon" aria-hidden="true">✓</div>
+    <div class="row-icon" aria-hidden="true"><i data-lucide="clipboard-check"></i></div>
     <div class="row-main">
       <strong>${safeText(a.name)}</strong>
       <small>${safeText(a.course_name || courseById(a.course_id)?.name || "Course")} · ${safeText(a.points_possible != null ? `${a.points_possible} pts` : "Assignment")}</small>
@@ -182,6 +182,10 @@ function courseCard(c) {
       <p>${score != null ? `Current grade: ${safeText(score)}%` : "Open course in Canvas Hub"}</p>
     </div>
   </button>`;
+}
+
+function refreshIcons() {
+  if (window.lucide?.createIcons) window.lucide.createIcons();
 }
 
 function renderAll() {
@@ -216,6 +220,7 @@ function renderAll() {
   renderDiagnostics();
   applyLayoutPrefs();
   bindDynamicClicks();
+  refreshIcons();
 }
 
 function renderCoursesGrid() {
@@ -285,7 +290,7 @@ function announcementCard(a) {
   const html = sanitizeHtml(a.message || "");
   const fallback = plainText(a.message || "") || "No message text was returned.";
   return `<article class="list-row" style="cursor:default">
-    <div class="row-icon" aria-hidden="true">◉</div>
+    <div class="row-icon" aria-hidden="true"><i data-lucide="megaphone"></i></div>
     <div class="row-main">
       <strong>${safeText(a.title || "Announcement")}</strong>
       <small>${safeText(a.course_name || "Course")} · ${safeText(dateLabel(a.posted_at || a.created_at, { month: "short", day: "numeric", year: "numeric" }))}</small>
@@ -305,6 +310,7 @@ function renderAnnouncements() {
 }
 
 async function renderCoursePage() {
+  refreshIcons();
   const course = courseById(state.courseId);
   if (!course) {
     $("course-header").innerHTML = '<div class="empty-state">Course not found in the loaded enrollment list.</div>';
@@ -420,6 +426,7 @@ function openAssignment(id, courseId) {
 }
 
 function bindDynamicClicks() {
+  refreshIcons();
   $$("[data-open-course]").forEach((el) => {
     el.onclick = () => switchView("course", { courseId: el.dataset.openCourse });
   });
