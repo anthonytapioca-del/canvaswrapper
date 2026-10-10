@@ -1,45 +1,110 @@
-# Canvas Hub — Vercel starter
+# Canvas Hub
 
-A responsive Canvas LMS dashboard using the official Canvas REST API. Includes courses, assignments, current grades when available, announcements, and a dark/light theme.
+A Canvas LMS dashboard that talks to your school’s Canvas instance through the official REST API. Courses, assignments, missing work, grades, and announcements stay inside the app instead of bouncing you to Canvas.
+
+This project is an independent wrapper. It is not an Instructure product and cannot bypass school permissions.
+
+## What works now
+
+- In-app course pages (overview, assignments, grades, announcements, course information)
+- Missing-assignment counts based on Canvas `submission.missing`, not “anything past due”
+- Assignments page with search, course filter, status filter, due-date sort, and an in-app detail dialog
+- Grades page that only shows scores Canvas actually returned
+- Sanitized in-app announcements
+- API & Developers documentation plus a personalized link generator (domain + starting view only)
+- Settings (theme, accent, layout, dashboard sections) stored separately from credentials
+- Connection diagnostics, refresh, disconnect
+- HTTPS-only Canvas origin checks, endpoint allowlisting, pagination via `Link`, and `no-store` on private API responses
+- OAuth2 **structure** for multi-user production (start, callback, HTTP-only session cookie, logout). This is inactive until a Canvas developer key and Vercel env vars are set.
 
 ## Important security notes
 
-- This starter uses a **user-provided Canvas API access token**. It does not store the token in a database or Vercel environment variable. It is kept in the current browser tab's `sessionStorage` and sent in the POST body to `/api/canvas`; it is not placed in a URL.
-- Anyone who controls the browser session can use the token while the session is active. Disconnect when finished, and do not use this on a public/shared computer.
-- Use only a Canvas account and token you are authorized to use. Your school may disable personal access tokens or restrict API access.
-- For a public multi-user production app, do **not** ask users to paste tokens. Implement Canvas OAuth2 with an institution-approved developer key, server-side sessions, CSRF protection, and secure encrypted token storage. OAuth setup may require your Canvas administrator.
-- This is an independent wrapper, not an official Instructure product. It does not bypass school permissions.
-- The API proxy has an endpoint allowlist and only accepts HTTPS Canvas origins. It intentionally supports the endpoints this dashboard needs.
+- The default connect flow uses a **user-provided Canvas API token** kept in this tab’s `sessionStorage` and sent in the POST body to `/api/canvas`. It is never placed in a URL.
+- Session storage is a temporary approach. Anyone with access to the browser tab can use the token until Disconnect. Do not use this on a public computer.
+- UI preferences go in `localStorage`. Tokens do not.
+- For a public multi-user app, do **not** ask people to paste tokens. Configure Canvas OAuth2 (below).
+- The proxy only forwards allowlisted `/api/v1/...` paths to a validated HTTPS Canvas origin.
 
-## Deploy to Vercel
+## Required environment variables
 
-1. Download and unzip this project.
-2. Create a repository on GitHub and upload the contents of this folder (make sure `index.html`, `style.css`, `app.js`, `vercel.json`, and `api/canvas.js` are at the repository root / expected paths).
-3. In Vercel, choose **Add New → Project**, import the repository, and deploy.
-4. This is a static HTML/CSS/JS project with one Vercel serverless function. Use the **Other** framework preset. No build command is required; the static files are served from the project root. If Vercel asks for an output directory, leave it blank or use `.`.
-5. Open the deployed URL and choose **Connect Canvas**.
+None are required for personal-token mode.
 
-## Connect Canvas
+For OAuth:
 
-1. Enter your Canvas base URL, e.g. `https://school.instructure.com` or the Canvas URL supplied by your school. Use the site's origin, not a course URL.
-2. Create a personal access token only if your school permits it. In Canvas this is commonly under **Account → Settings → Approved Integrations → New Access Token**; the labels can vary or the option may be disabled by your school.
-3. Paste the token and click **Connect & load**.
-4. If you see a 401 error, the token may be invalid/expired or the Canvas URL may be wrong. A 403 usually means the account/token is not permitted to access that data.
+| Variable | Purpose |
+| --- | --- |
+| `CANVAS_OAUTH_CLIENT_ID` | Canvas developer key id |
+| `CANVAS_OAUTH_CLIENT_SECRET` | Canvas developer key secret (server only) |
+| `SESSION_SECRET` | Encrypts the HTTP-only session cookie |
+| `OAUTH_REDIRECT_URI` | `https://YOUR_DEPLOYMENT/api/oauth-callback` |
+| `CANVAS_BASE_URL` | Optional default Canvas origin |
 
-## Included dashboard features
+See `.env.example`. Never commit real secrets.
 
-- Active course cards and course links
-- Upcoming assignments, due dates, and basic due-state labels
-- Current course grades/score where Canvas exposes them
-- Recent course announcements
-- Search and due-date filters for assignments
-- Dark/light theme toggle
-- Responsive layout for desktop and mobile
+## Canvas administrator configuration (OAuth)
 
-## Notes / limitations
+1. Ask your Canvas admin for a **developer key** (OAuth client) for Canvas Hub.
+2. Set the redirect URI exactly to `https://<your-vercel-domain>/api/oauth-callback`.
+3. Put the client id, client secret, a long random `SESSION_SECRET`, and the redirect URI in Vercel → Project → Settings → Environment Variables.
+4. Redeploy.
 
-- The API currently loads assignments and grades from up to 30 active courses to keep serverless requests bounded. Announcements are loaded for up to 20 courses.
-- Some courses may not expose a current grade or announcements through the API; the dashboard will show an empty state.
-- Grade values are presented as returned by Canvas, and grading policies can differ by course.
-- This starter does not submit assignments, change grades, or write to Canvas.
-- The proxy is designed for personal use, not as a public token relay. Do not expose it as a shared service.
+Until those values exist, **Authorize with Canvas** is disabled and the app stays on personal tokens. Do not claim OAuth is live without that setup.
+
+OAuth tokens are stored in an encrypted HTTP-only cookie (Vercel has no built-in session database). Very large tokens may not fit in a cookie; personal-token mode still works.
+
+## Test locally
+
+```bash
+npx vercel dev
+```
+
+Open the printed local URL. You need a Canvas HTTPS origin and an authorized token (or configured OAuth) to load live data.
+
+Static UI-only preview (API routes will not work):
+
+```bash
+npx --yes serve . -p 3000
+```
+
+Checks to run:
+
+1. App loads with no JavaScript errors
+2. Sidebar, mobile menu, settings, docs, and link generator work without a token
+3. Invalid Canvas URLs are rejected
+4. Connect with a real token: courses open in-app, missing counts match across Overview / Assignments / course pages
+5. Disconnect clears the session
+6. Generated links contain only `canvas` and `view` — never tokens
+
+## Deploy / redeploy on Vercel
+
+The existing project at [canvaswrapper.vercel.app](https://canvaswrapper.vercel.app) can stay attached to this GitHub repo.
+
+1. Commit and push to `https://github.com/anthonytapioca-del/canvaswrapper`
+2. Vercel rebuilds automatically if the GitHub integration is on
+3. Or: Vercel → Add New → Project → import this repo
+4. Framework preset: **Other**. No build command. Output directory blank / `.`
+5. Confirm `index.html`, `style.css`, `app.js`, `js/`, `api/`, and `vercel.json` are at the repo root
+6. Add OAuth env vars only if you have a developer key
+7. Open the deployment and use **Connect Canvas**
+
+## Canvas Hub API routes
+
+| Method | Path | Role |
+| --- | --- | --- |
+| POST | `/api/canvas` | Allowlisted Canvas proxy |
+| GET | `/api/session` | OAuth/session status (no tokens) |
+| POST | `/api/logout` | Clear session cookie |
+| GET | `/api/oauth-start` | Redirect to Canvas OAuth (if configured) |
+| GET | `/api/oauth-callback` | Token exchange (if configured) |
+
+Official Canvas endpoints used: `/api/v1/users/self/profile`, `/api/v1/courses`, `/api/v1/courses/:id`, `/api/v1/courses/:id/assignments` (`include[]=submission`), `/api/v1/courses/:id/enrollments`, `/api/v1/announcements`.
+
+Full examples live on the in-app **API & Developers** page.
+
+## Not implemented
+
+- Submitting assignments, taking quizzes, or posting in Canvas
+- Server-synced notes (Quick notes are local only)
+- Invented grades or a made-up letter-grade scale
+- A shared multi-tenant token store / database (OAuth uses an encrypted cookie instead)
+- OAuth against your school until a developer key is issued

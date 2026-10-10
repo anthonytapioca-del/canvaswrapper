@@ -1,26 +1,26 @@
 {
   "version": 2,
   "functions": {
-    "api/canvas.js": {
-      "maxDuration": 15
-    }
+    "api/canvas.js": { "maxDuration": 15 },
+    "api/oauth-start.js": { "maxDuration": 10 },
+    "api/oauth-callback.js": { "maxDuration": 10 },
+    "api/logout.js": { "maxDuration": 5 },
+    "api/session.js": { "maxDuration": 5 }
   },
   "headers": [
     {
+      "source": "/api/(.*)",
+      "headers": [
+        { "key": "Cache-Control", "value": "no-store, no-cache, must-revalidate, private" },
+        { "key": "X-Content-Type-Options", "value": "nosniff" }
+      ]
+    },
+    {
       "source": "/(.*)",
       "headers": [
-        {
-          "key": "X-Frame-Options",
-          "value": "DENY"
-        },
-        {
-          "key": "Referrer-Policy",
-          "value": "strict-origin-when-cross-origin"
-        },
-        {
-          "key": "Permissions-Policy",
-          "value": "camera=(), microphone=(), geolocation=()"
-        }
+        { "key": "X-Frame-Options", "value": "DENY" },
+        { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" },
+        { "key": "Permissions-Policy", "value": "camera=(), microphone=(), geolocation=()" }
       ]
     }
   ]

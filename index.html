@@ -3,65 +3,367 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="theme-color" content="#10111b">
+  <meta name="theme-color" content="#0f1117">
+  <meta name="description" content="Canvas Hub — a private dashboard for your school's Canvas LMS">
   <title>Canvas Hub</title>
   <link rel="stylesheet" href="/style.css">
 </head>
 <body>
+  <a class="skip-link" href="#main">Skip to content</a>
   <div class="app-shell">
-    <aside class="sidebar">
-      <div class="brand"><div class="brand-mark">C</div><div><strong>Canvas Hub</strong><small>YOUR LEARNING SPACE</small></div></div>
-      <div class="nav-label">WORKSPACE</div>
-      <button class="nav-item active" data-view="overview"><span>⌂</span> Overview</button>
-      <button class="nav-item" data-view="courses"><span>▦</span> Courses</button>
-      <button class="nav-item" data-view="assignments"><span>✓</span> Assignments <i id="assignment-count"></i></button>
-      <button class="nav-item" data-view="grades"><span>▤</span> Grades</button>
-      <button class="nav-item" data-view="announcements"><span>◉</span> Announcements</button>
+    <div class="nav-scrim" id="nav-scrim" hidden></div>
+    <aside class="sidebar" id="sidebar" aria-label="Primary">
+      <div class="brand">
+        <div class="brand-mark" aria-hidden="true">C</div>
+        <div class="brand-copy"><strong>Canvas Hub</strong><small>Learning dashboard</small></div>
+        <button class="icon-btn collapse-btn" id="sidebar-toggle" type="button" aria-label="Collapse sidebar" title="Collapse sidebar">«</button>
+      </div>
+      <nav class="side-nav">
+        <p class="nav-label">Workspace</p>
+        <button class="nav-item active" data-view="overview" type="button"><span aria-hidden="true">⌂</span><span class="nav-text">Overview</span></button>
+        <button class="nav-item" data-view="courses" type="button"><span aria-hidden="true">▦</span><span class="nav-text">Courses</span></button>
+        <button class="nav-item" data-view="assignments" type="button"><span aria-hidden="true">✓</span><span class="nav-text">Assignments</span> <i id="missing-nav-count" class="nav-count" hidden></i></button>
+        <button class="nav-item" data-view="grades" type="button"><span aria-hidden="true">▤</span><span class="nav-text">Grades</span></button>
+        <button class="nav-item" data-view="announcements" type="button"><span aria-hidden="true">◉</span><span class="nav-text">Announcements</span></button>
+        <p class="nav-label">Tools</p>
+        <button class="nav-item" data-view="developers" type="button"><span aria-hidden="true">{ }</span><span class="nav-text">API &amp; Developers</span></button>
+        <button class="nav-item" data-view="settings" type="button"><span aria-hidden="true">⚙</span><span class="nav-text">Settings</span></button>
+        <button class="nav-item" data-view="diagnostics" type="button"><span aria-hidden="true">◎</span><span class="nav-text">Diagnostics</span></button>
+      </nav>
       <div class="sidebar-bottom">
-        <div class="connection-indicator"><span id="status-dot"></span><div><strong id="connection-label">Not connected</strong><small id="connection-sub">Connect your Canvas account</small></div></div>
-        <button class="nav-item" id="settings-open"><span>⚙</span> Connection & settings</button>
+        <div class="connection-indicator">
+          <span id="status-dot" class="status-dot" aria-hidden="true"></span>
+          <div>
+            <strong id="connection-label">Not connected</strong>
+            <small id="connection-sub">Connect your Canvas account</small>
+          </div>
+        </div>
+        <button class="nav-item" id="connect-open" type="button"><span aria-hidden="true">↗</span><span class="nav-text">Connect Canvas</span></button>
       </div>
     </aside>
-    <main class="main">
+    <div class="main-wrap">
       <header class="topbar">
-        <div><div class="eyebrow" id="eyebrow">YOUR SCHOOL, AT A GLANCE</div><h1 id="page-title">Good to see you.</h1></div>
-        <div class="top-actions"><button class="icon-btn" id="theme-toggle" title="Toggle theme" aria-label="Toggle theme">☼</button><button class="avatar" id="profile-avatar">?</button></div>
+        <button class="icon-btn mobile-nav-btn" id="mobile-nav" type="button" aria-label="Open navigation" aria-controls="sidebar">☰</button>
+        <div class="topbar-copy">
+          <div class="eyebrow" id="eyebrow">Your school, at a glance</div>
+          <h1 id="page-title">Good to see you</h1>
+        </div>
+        <div class="top-actions">
+          <div class="conn-chip" id="conn-chip" title="Connection status">
+            <span id="top-status-dot" class="status-dot" aria-hidden="true"></span>
+            <span id="top-status-text">Offline</span>
+          </div>
+          <button class="icon-btn" id="refresh-btn" type="button" aria-label="Refresh Canvas data" title="Refresh">↻</button>
+          <button class="avatar" id="profile-avatar" type="button" aria-label="Account" title="Account">?</button>
+        </div>
       </header>
-      <section id="connect-banner" class="connect-banner">
-        <div class="banner-icon">✦</div><div class="banner-copy"><strong>Connect your Canvas account</strong><p>Use your school's Canvas URL and a Canvas API access token to load your courses, grades, and assignments.</p></div>
-        <button class="primary-btn" id="connect-open">Connect Canvas <span>↗</span></button>
-      </section>
-      <div id="alert" class="alert hidden" role="status"></div>
-      <section id="overview-view" class="view">
-        <div class="welcome-row"><div><h2 id="welcome-name">Your semester, organized.</h2><p>Everything you need to stay on top of class.</p></div><div class="date-pill" id="today-date"></div></div>
-        <div class="stats-grid">
-          <article class="stat-card"><div class="stat-top"><span>Active courses</span><span class="stat-icon violet">▦</span></div><strong id="stat-courses">—</strong><small>Current enrollments</small></article>
-          <article class="stat-card"><div class="stat-top"><span>Upcoming assignments</span><span class="stat-icon blue">✓</span></div><strong id="stat-assignments">—</strong><small>Not yet past due</small></article>
-          <article class="stat-card"><div class="stat-top"><span>Courses with grades</span><span class="stat-icon green">↗</span></div><strong id="stat-graded">—</strong><small>Grade data available</small></article>
-          <article class="stat-card"><div class="stat-top"><span>Announcements</span><span class="stat-icon amber">◉</span></div><strong id="stat-announcements">—</strong><small>Recent course updates</small></article>
-        </div>
-        <div class="content-grid">
-          <section class="panel"><div class="panel-heading"><div><h3>Upcoming assignments</h3><p>What’s next on your list</p></div><button class="text-btn" data-goto="assignments">View all →</button></div><div id="overview-assignments" class="list-stack"><div class="empty-state">Connect Canvas to load your assignments.</div></div></section>
-          <section class="panel"><div class="panel-heading"><div><h3>Your courses</h3><p>Jump back into a class</p></div><button class="text-btn" data-goto="courses">View all →</button></div><div id="overview-courses" class="course-mini-grid"><div class="empty-state">Your courses will appear here.</div></div></section>
-        </div>
-        <section class="panel announcements-panel"><div class="panel-heading"><div><h3>Latest announcements</h3><p>Updates from your instructors</p></div><button class="text-btn" data-goto="announcements">View all →</button></div><div id="overview-announcements" class="list-stack"><div class="empty-state">Recent announcements will appear here.</div></div></section>
-      </section>
-      <section id="courses-view" class="view hidden"><div class="section-intro"><h2>Your courses</h2><p>All of your active Canvas classes in one place.</p></div><div id="courses-grid" class="courses-grid"><div class="empty-state">Connect Canvas to see your courses.</div></div></section>
-      <section id="assignments-view" class="view hidden"><div class="section-intro"><h2>Assignments</h2><p>Upcoming work from across your courses.</p></div><div class="filter-row"><input id="assignment-search" type="search" placeholder="Search assignments…"><select id="assignment-filter"><option value="upcoming">Upcoming & due soon</option><option value="all">All loaded assignments</option><option value="past">Past due</option></select></div><div id="assignments-list" class="list-stack panel"><div class="empty-state">Connect Canvas to see assignments.</div></div></section>
-      <section id="grades-view" class="view hidden"><div class="section-intro"><h2>Grades</h2><p>Your current grade information from Canvas.</p></div><div id="grades-grid" class="grades-grid"><div class="empty-state">Connect Canvas to load grades.</div></div><p class="fine-print">Grades are shown exactly as returned by your school's Canvas system. Some courses may not publish a current grade.</p></section>
-      <section id="announcements-view" class="view hidden"><div class="section-intro"><h2>Announcements</h2><p>Recent news from your courses.</p></div><div id="announcements-list" class="list-stack panel"><div class="empty-state">Connect Canvas to load announcements.</div></div></section>
-      <footer><span>Canvas Hub</span><span>Independent interface · Uses the official Canvas API</span><button class="text-btn" id="footer-settings">Settings</button></footer>
-    </main>
+      <main id="main" class="main">
+        <section id="connect-banner" class="connect-banner">
+          <div class="banner-icon" aria-hidden="true">✦</div>
+          <div class="banner-copy">
+            <strong>Connect your Canvas account</strong>
+            <p>Use your school’s Canvas URL and an authorized API token. Canvas Hub does not redirect you away for courses, assignments, or grades.</p>
+          </div>
+          <button class="primary-btn" id="connect-banner-btn" type="button">Connect Canvas</button>
+        </section>
+        <div id="alert" class="alert hidden" role="status"></div>
+
+        <section id="overview-view" class="view" data-page="overview">
+          <div class="welcome-row">
+            <div>
+              <h2 id="welcome-name">Your semester, organized</h2>
+              <p id="last-synced">Connect to load live Canvas data. Nothing here is invented when a request fails.</p>
+            </div>
+            <div class="date-pill" id="today-date"></div>
+          </div>
+          <div class="stats-grid" id="stats-grid">
+            <article class="stat-card" data-card="courses"><div class="stat-top"><span>Active courses</span><span class="stat-icon violet">▦</span></div><strong id="stat-courses">—</strong><small>Current enrollments</small></article>
+            <article class="stat-card" data-card="upcoming"><div class="stat-top"><span>Upcoming</span><span class="stat-icon blue">✓</span></div><strong id="stat-upcoming">—</strong><small>Not yet due</small></article>
+            <article class="stat-card" data-card="missing"><div class="stat-top"><span>Missing</span><span class="stat-icon rose">!</span></div><strong id="stat-missing">—</strong><small>Flagged missing by Canvas</small></article>
+            <article class="stat-card" data-card="grades"><div class="stat-top"><span>Available grades</span><span class="stat-icon green">↗</span></div><strong id="stat-graded">—</strong><small>Courses with published scores</small></article>
+          </div>
+          <div class="content-grid">
+            <section class="panel" data-section="upcoming">
+              <div class="panel-heading"><div><h3>Upcoming assignments</h3><p>What’s next on your list</p></div><button class="text-btn" data-goto="assignments" type="button">View all</button></div>
+              <div id="overview-assignments" class="list-stack"><div class="empty-state">Connect Canvas to load your assignments.</div></div>
+            </section>
+            <section class="panel" data-section="courses">
+              <div class="panel-heading"><div><h3>Your courses</h3><p>Open a class inside Canvas Hub</p></div><button class="text-btn" data-goto="courses" type="button">View all</button></div>
+              <div id="overview-courses" class="course-mini-grid"><div class="empty-state">Your courses will appear here.</div></div>
+            </section>
+          </div>
+          <section class="panel" data-section="announcements">
+            <div class="panel-heading"><div><h3>Latest announcements</h3><p>Updates from your instructors</p></div><button class="text-btn" data-goto="announcements" type="button">View all</button></div>
+            <div id="overview-announcements" class="list-stack"><div class="empty-state">Recent announcements will appear here.</div></div>
+          </section>
+          <div class="content-grid">
+            <section class="panel" data-section="grades">
+              <div class="panel-heading"><div><h3>Grade snapshot</h3><p>Only scores Canvas actually returned</p></div><button class="text-btn" data-goto="grades" type="button">View grades</button></div>
+              <div id="overview-grades" class="list-stack"><div class="empty-state">Grades appear when your school publishes them.</div></div>
+            </section>
+            <section class="panel" data-section="notes">
+              <div class="panel-heading"><div><h3>Quick notes</h3><p>Stored only in this browser — not synced to Canvas</p></div></div>
+              <label class="sr-only" for="quick-notes">Local notes</label>
+              <textarea id="quick-notes" rows="7" placeholder="Jot something for yourself. These notes stay on this device."></textarea>
+            </section>
+          </div>
+        </section>
+
+        <section id="courses-view" class="view hidden" data-page="courses">
+          <div class="section-intro">
+            <h2>Your courses</h2>
+            <p>Open a course to see assignments, grades, and announcements in Canvas Hub.</p>
+          </div>
+          <div class="filter-row">
+            <label class="sr-only" for="course-search">Search courses</label>
+            <input id="course-search" type="search" placeholder="Search courses…">
+          </div>
+          <div id="courses-grid" class="courses-grid"><div class="empty-state">Connect Canvas to see your courses.</div></div>
+        </section>
+
+        <section id="course-view" class="view hidden" data-page="course">
+          <button class="text-btn back-btn" id="course-back" type="button">← All courses</button>
+          <div id="course-header" class="course-hero"></div>
+          <div class="tablist" role="tablist" aria-label="Course sections">
+            <button role="tab" aria-selected="true" data-course-tab="overview" type="button">Overview</button>
+            <button role="tab" aria-selected="false" data-course-tab="assignments" type="button">Assignments <i id="course-missing-count" class="nav-count" hidden></i></button>
+            <button role="tab" aria-selected="false" data-course-tab="grades" type="button">Grades</button>
+            <button role="tab" aria-selected="false" data-course-tab="announcements" type="button">Announcements</button>
+            <button role="tab" aria-selected="false" data-course-tab="info" type="button">Course information</button>
+          </div>
+          <div id="course-tab-overview" class="course-tab" role="tabpanel"></div>
+          <div id="course-tab-assignments" class="course-tab hidden" role="tabpanel">
+            <div class="filter-row">
+              <label class="sr-only" for="course-asg-search">Search course assignments</label>
+              <input id="course-asg-search" type="search" placeholder="Search assignments…">
+              <label class="sr-only" for="course-asg-filter">Filter by status</label>
+              <select id="course-asg-filter">
+                <option value="all">All</option>
+                <option value="missing">Missing</option>
+                <option value="upcoming">Upcoming</option>
+                <option value="submitted">Submitted</option>
+                <option value="graded">Graded</option>
+                <option value="past-due">Past due</option>
+              </select>
+            </div>
+            <div id="course-assignments" class="list-stack panel"></div>
+          </div>
+          <div id="course-tab-grades" class="course-tab hidden" role="tabpanel"></div>
+          <div id="course-tab-announcements" class="course-tab hidden" role="tabpanel"></div>
+          <div id="course-tab-info" class="course-tab hidden" role="tabpanel"></div>
+        </section>
+
+        <section id="assignments-view" class="view hidden" data-page="assignments">
+          <div class="section-intro">
+            <h2>Assignments</h2>
+            <p>Missing items use Canvas <code>submission.missing</code>. Past due is not treated as missing by default.</p>
+          </div>
+          <div class="filter-row wrap">
+            <label class="sr-only" for="assignment-search">Search assignments</label>
+            <input id="assignment-search" type="search" placeholder="Search by assignment name…">
+            <label class="sr-only" for="assignment-course">Filter by course</label>
+            <select id="assignment-course"><option value="all">All courses</option></select>
+            <label class="sr-only" for="assignment-filter">Filter by status</label>
+            <select id="assignment-filter">
+              <option value="all">All statuses</option>
+              <option value="missing">Missing</option>
+              <option value="upcoming">Upcoming</option>
+              <option value="submitted">Submitted</option>
+              <option value="graded">Graded</option>
+              <option value="past-due">Past due</option>
+              <option value="excused">Excused</option>
+            </select>
+            <label class="sr-only" for="assignment-sort">Sort</label>
+            <select id="assignment-sort">
+              <option value="due-asc">Due date (soonest)</option>
+              <option value="due-desc">Due date (latest)</option>
+              <option value="name">Name</option>
+            </select>
+          </div>
+          <div id="assignments-list" class="list-stack panel"><div class="empty-state">Connect Canvas to see assignments.</div></div>
+        </section>
+
+        <section id="grades-view" class="view hidden" data-page="grades">
+          <div class="section-intro">
+            <h2>Grades</h2>
+            <p>Canvas Hub never invents a score. Unavailable grades stay blank — they are not treated as zero.</p>
+          </div>
+          <p id="grades-summary" class="fine-print"></p>
+          <div id="grades-grid" class="grades-grid"><div class="empty-state">Connect Canvas to load grades.</div></div>
+        </section>
+
+        <section id="announcements-view" class="view hidden" data-page="announcements">
+          <div class="section-intro">
+            <h2>Announcements</h2>
+            <p>HTML from Canvas is sanitized before it is shown. Scripts are never executed.</p>
+          </div>
+          <div class="filter-row">
+            <label class="sr-only" for="announcement-search">Search announcements</label>
+            <input id="announcement-search" type="search" placeholder="Search announcements…">
+            <label class="sr-only" for="announcement-course">Filter by course</label>
+            <select id="announcement-course"><option value="all">All courses</option></select>
+          </div>
+          <div id="announcements-list" class="list-stack panel"><div class="empty-state">Connect Canvas to load announcements.</div></div>
+        </section>
+
+        <section id="developers-view" class="view hidden" data-page="developers">
+          <div class="section-intro">
+            <h2>API &amp; Developers</h2>
+            <p>Documentation for Canvas Hub routes and the official Canvas REST endpoints this app uses. <a href="https://developerdocs.instructure.com/services/canvas" target="_blank" rel="noopener noreferrer">Official Canvas developer docs ↗</a></p>
+          </div>
+          <div class="docs-legend">
+            <span class="pill hub">Canvas Hub route</span>
+            <span class="pill canvas">Official Canvas REST API</span>
+            <span class="pill warn">Server-side examples — do not embed tokens in frontend code</span>
+          </div>
+          <div id="docs-list" class="docs-list"></div>
+          <section class="panel generator-panel">
+            <h3>Generate a personalized link</h3>
+            <p class="help-text">This link only sets the Canvas domain and starting view. It never includes tokens, grades, or profile data. Each visitor still has to connect their own authorized account.</p>
+            <div class="form-grid">
+              <label for="gen-domain">Canvas domain</label>
+              <input id="gen-domain" type="url" placeholder="https://school.instructure.com" autocomplete="url">
+              <label for="gen-page">Starting page</label>
+              <select id="gen-page">
+                <option value="overview">Overview</option>
+                <option value="courses">Courses</option>
+                <option value="assignments">Assignments</option>
+                <option value="grades">Grades</option>
+                <option value="announcements">Announcements</option>
+                <option value="developers">API &amp; Developers</option>
+                <option value="settings">Settings</option>
+              </select>
+            </div>
+            <p class="preview-label">Preview</p>
+            <code id="gen-preview" class="link-preview"></code>
+            <div class="dialog-actions" style="margin-top:14px">
+              <button class="primary-btn" id="copy-link" type="button">Copy link</button>
+            </div>
+            <p class="help-text" id="gen-error" role="status"></p>
+          </section>
+        </section>
+
+        <section id="settings-view" class="view hidden" data-page="settings">
+          <div class="section-intro">
+            <h2>Settings</h2>
+            <p>Appearance and dashboard preferences are stored in this browser. Credentials are kept separately in session storage or an HTTP-only cookie.</p>
+          </div>
+          <form id="prefs-form" class="settings-form">
+            <fieldset>
+              <legend>Theme</legend>
+              <label><input type="radio" name="theme" value="light"> Light</label>
+              <label><input type="radio" name="theme" value="dark"> Dark</label>
+              <label><input type="radio" name="theme" value="system"> System</label>
+            </fieldset>
+            <label for="accent-color">Accent color</label>
+            <input id="accent-color" type="color" value="#7c6cf0">
+            <label><input type="checkbox" id="pref-collapse"> Collapsed sidebar</label>
+            <label><input type="checkbox" id="pref-compact"> Compact layout</label>
+            <label for="pref-start">Default starting page</label>
+            <select id="pref-start">
+              <option value="overview">Overview</option>
+              <option value="courses">Courses</option>
+              <option value="assignments">Assignments</option>
+              <option value="grades">Grades</option>
+              <option value="announcements">Announcements</option>
+            </select>
+            <fieldset>
+              <legend>Dashboard sections</legend>
+              <label><input type="checkbox" data-section-toggle="stats"> Summary cards</label>
+              <label><input type="checkbox" data-section-toggle="upcoming"> Upcoming assignments</label>
+              <label><input type="checkbox" data-section-toggle="courses"> Course list</label>
+              <label><input type="checkbox" data-section-toggle="announcements"> Announcements</label>
+              <label><input type="checkbox" data-section-toggle="grades"> Grade snapshot</label>
+              <label><input type="checkbox" data-section-toggle="notes"> Quick notes</label>
+            </fieldset>
+            <fieldset>
+              <legend>Summary cards</legend>
+              <label><input type="checkbox" data-card-toggle="courses"> Active courses</label>
+              <label><input type="checkbox" data-card-toggle="upcoming"> Upcoming</label>
+              <label><input type="checkbox" data-card-toggle="missing"> Missing</label>
+              <label><input type="checkbox" data-card-toggle="grades"> Available grades</label>
+            </fieldset>
+            <label><input type="checkbox" id="pref-announcements"> Show announcements in the app</label>
+            <label for="pref-asg-display">Assignment density</label>
+            <select id="pref-asg-display">
+              <option value="comfortable">Comfortable</option>
+              <option value="compact">Compact</option>
+            </select>
+            <div class="dialog-actions">
+              <button class="danger-btn" id="reset-prefs" type="button">Reset to defaults</button>
+              <span class="spacer"></span>
+              <button class="primary-btn" type="submit">Save preferences</button>
+            </div>
+          </form>
+        </section>
+
+        <section id="diagnostics-view" class="view hidden" data-page="diagnostics">
+          <div class="section-intro">
+            <h2>Connection diagnostics</h2>
+            <p>Tokens are never shown here. Use Test Connection to probe the profile endpoint without loading every course.</p>
+          </div>
+          <div id="diag-panel" class="diag-grid"></div>
+          <div class="dialog-actions">
+            <button class="secondary-btn" id="test-connection" type="button">Test connection</button>
+            <button class="primary-btn" id="retry-load" type="button">Retry full load</button>
+          </div>
+          <section class="panel">
+            <h3>Common HTTP statuses</h3>
+            <ul class="help-list">
+              <li><strong>401</strong> — Token missing, invalid, or expired. Create a new token or re-authorize OAuth.</li>
+              <li><strong>403</strong> — Your account does not have permission for that resource.</li>
+              <li><strong>404</strong> — Course or path not found, or the Canvas URL is wrong.</li>
+              <li><strong>429</strong> — Canvas rate limit. Wait and retry; Hub already backs off once or twice.</li>
+              <li><strong>5xx / 502</strong> — Canvas or the Hub proxy could not complete the request.</li>
+            </ul>
+          </section>
+        </section>
+      </main>
+      <footer>
+        <span>Canvas Hub</span>
+        <span>Independent interface · Official Canvas REST API · Not affiliated with Instructure</span>
+        <button class="text-btn" id="footer-connect" type="button">Connection</button>
+      </footer>
+    </div>
   </div>
-  <dialog id="settings-dialog">
-    <form id="settings-form" method="dialog">
-      <div class="dialog-head"><div><div class="eyebrow">ACCOUNT CONNECTION</div><h2>Connect Canvas</h2><p>Connect directly to your school's Canvas instance.</p></div><button class="icon-btn" type="button" id="settings-close" aria-label="Close">×</button></div>
-      <label for="canvas-url">Canvas URL</label><input id="canvas-url" type="url" placeholder="https://school.instructure.com" autocomplete="url" required>
-      <label for="canvas-token">Canvas API access token</label><input id="canvas-token" type="password" placeholder="Paste your token" autocomplete="off" required>
-      <p class="help-text">The token is kept in this browser tab's session storage and sent to your Vercel API route to make official Canvas API requests. Never use this on a public/shared device. A school may disable personal tokens; use only access methods your school permits.</p>
-      <div class="dialog-actions"><button class="danger-btn" type="button" id="disconnect-btn">Disconnect</button><span class="spacer"></span><button class="secondary-btn" type="button" id="cancel-settings">Cancel</button><button class="primary-btn" type="submit" id="save-connect">Connect & load</button></div>
+
+  <dialog id="connect-dialog" aria-labelledby="connect-title">
+    <form id="connect-form" method="dialog">
+      <div class="dialog-head">
+        <div>
+          <div class="eyebrow">Account connection</div>
+          <h2 id="connect-title">Connect Canvas</h2>
+          <p>Personal access tokens stay in this tab’s session storage and are sent in the POST body to <code>/api/canvas</code>. They are not stored with UI settings. This is not fully secure on a shared computer.</p>
+        </div>
+        <button class="icon-btn" type="button" id="connect-close" aria-label="Close">×</button>
+      </div>
+      <label for="canvas-url">Canvas URL</label>
+      <input id="canvas-url" type="url" placeholder="https://school.instructure.com" autocomplete="url" required>
+      <label for="canvas-token">Canvas API access token</label>
+      <input id="canvas-token" type="password" placeholder="Paste your token" autocomplete="off">
+      <p class="help-text" id="oauth-help"></p>
+      <div class="dialog-actions">
+        <button class="danger-btn" type="button" id="disconnect-btn">Disconnect</button>
+        <span class="spacer"></span>
+        <button class="secondary-btn" type="button" id="oauth-btn">Authorize with Canvas</button>
+        <button class="primary-btn" type="submit" id="save-connect">Connect &amp; load</button>
+      </div>
     </form>
   </dialog>
-  <script src="/app.js" defer></script>
+
+  <dialog id="assignment-dialog" aria-labelledby="asg-dialog-title">
+    <div class="dialog-head">
+      <div>
+        <div class="eyebrow">Assignment</div>
+        <h2 id="asg-dialog-title">Assignment</h2>
+      </div>
+      <button class="icon-btn" type="button" id="asg-close" aria-label="Close">×</button>
+    </div>
+    <div id="asg-dialog-body"></div>
+    <p class="help-text">Submitting files or taking quizzes still requires Canvas. Those actions are not implemented here.</p>
+  </dialog>
+
+  <div id="toasts" class="toasts" aria-live="polite" aria-relevant="additions"></div>
+  <script type="module" src="/app.js"></script>
 </body>
 </html>
