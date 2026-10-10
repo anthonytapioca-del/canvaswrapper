@@ -6,7 +6,8 @@
   --border: #263751;
   --text: #f4f7fc;
   --muted: #96a5bb;
-  --violet: #a99aff;
+  --accent-color: #a392ff;
+  --violet: var(--accent-color);
   --mint: #6be0bd;
   --rose: #ff8c9f;
 }
@@ -32,7 +33,7 @@ body {
 .widget-header { align-items: center; display: flex; gap: 12px; }
 .brand-mark {
   align-items: center;
-  background: linear-gradient(135deg, #9a78ff, #557bff 58%, #42c9c0);
+  background: linear-gradient(135deg, color-mix(in srgb, var(--accent-color) 82%, white), var(--accent-color) 58%, #42c9c0);
   border-radius: 13px;
   box-shadow: 0 8px 22px #6c5ce755;
   color: white;
@@ -50,8 +51,8 @@ body {
 .status.ok { color: var(--mint); }
 .status.error { color: var(--rose); }
 .welcome-card {
-  background: linear-gradient(120deg, #8874ff24, #44d5c30d 70%);
-  border: 1px solid #8d80f72d;
+  background: linear-gradient(120deg, color-mix(in srgb, var(--accent-color) 14%, transparent), #44d5c30d 70%);
+  border: 1px solid color-mix(in srgb, var(--accent-color) 18%, transparent);
   border-radius: 16px;
   margin-top: 16px;
   padding: 14px 16px;
@@ -77,12 +78,12 @@ body {
 .widget-section:last-child:nth-child(odd) { grid-column: 1 / -1; }
 .section-heading { align-items: center; display: flex; justify-content: space-between; margin-bottom: 7px; }
 .section-heading h2 { font-size: 13px; letter-spacing: -.015em; margin: 0; }
-.section-count { background: #a99aff18; border-radius: 99px; color: var(--violet); font-size: 10px; min-width: 22px; padding: 3px 7px; text-align: center; }
+.section-count { background: color-mix(in srgb, var(--accent-color) 12%, transparent); border-radius: 99px; color: var(--violet); font-size: 10px; min-width: 22px; padding: 3px 7px; text-align: center; }
 .section-count.alert-count { background: #ff8c9f1b; color: var(--rose); }
 .data-list { display: grid; gap: 3px; }
 .data-row { align-items: center; border-top: 1px solid #ffffff0c; display: flex; gap: 8px; min-width: 0; padding: 8px 0 5px; }
 .course-dot { align-items: center; border-radius: 9px; display: flex; flex: 0 0 25px; font-size: 12px; height: 25px; justify-content: center; }
-.violet-dot { background: #a99aff17; color: var(--violet); }
+.violet-dot { background: color-mix(in srgb, var(--accent-color) 11%, transparent); color: var(--violet); }
 .rose-dot { background: #ff8c9f17; color: var(--rose); }
 .row-copy { flex: 1; min-width: 0; }
 .row-copy strong, .row-copy small { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }

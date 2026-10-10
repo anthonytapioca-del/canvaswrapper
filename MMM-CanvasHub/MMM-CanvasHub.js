@@ -39,6 +39,7 @@ Module.register("MMM-CanvasHub", {
       showGrades: this.config.showGrades,
       showMissing: this.config.showMissing,
       showAnnouncements: this.config.showAnnouncements,
+      accentColor: this.config.accentColor,
       updateInterval: this.config.updateInterval
     }, this.hubOrigin);
   },

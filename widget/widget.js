@@ -245,8 +245,10 @@ function acceptConfig(event) {
     accessToken: message.accessToken,
     showGrades: message.showGrades !== false,
     showMissing: message.showMissing !== false,
-    showAnnouncements: message.showAnnouncements !== false
+    showAnnouncements: message.showAnnouncements !== false,
+    accentColor: /^#[\da-f]{6}$/i.test(message.accentColor) ? message.accentColor : "#a392ff"
   };
+  document.documentElement.style.setProperty("--accent-color", state.config.accentColor);
   if (state.timer) clearInterval(state.timer);
   const interval = Number(message.updateInterval);
   state.timer = setInterval(loadData, Number.isFinite(interval) ? Math.max(60000, interval) : 15 * 60 * 1000);

@@ -699,7 +699,8 @@ function generateMagicMirrorConfig() {
       accessToken,
       showGrades,
       showMissing,
-      showAnnouncements
+      showAnnouncements,
+      accentColor: $("mm-accent-color").value
     }
   };
   $("mm-generated-code").textContent = JSON.stringify(config, null, 2);
@@ -838,7 +839,7 @@ $("copy-mm-config").addEventListener("click", async () => {
 });
 $("mm-canvas-url").addEventListener("input", hideMagicMirrorConfig);
 $("mm-canvas-token").addEventListener("input", hideMagicMirrorConfig);
-["mm-show-grades", "mm-show-missing", "mm-show-announcements", "mm-position"].forEach((id) => {
+["mm-show-grades", "mm-show-missing", "mm-show-announcements", "mm-position", "mm-accent-color"].forEach((id) => {
   $(id).addEventListener("change", hideMagicMirrorConfig);
 });
 $("copy-link").addEventListener("click", async () => {
