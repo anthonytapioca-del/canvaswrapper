@@ -7,6 +7,8 @@
   <meta name="description" content="Canvas Hub — a private dashboard for your school's Canvas LMS">
   <title>Canvas Hub</title>
   <link rel="stylesheet" href="/style.css">
+  <link rel="preconnect" href="https://unpkg.com">
+  <script defer src="https://unpkg.com/lucide@latest"></script>
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
@@ -14,21 +16,21 @@
     <div class="nav-scrim" id="nav-scrim" hidden></div>
     <aside class="sidebar" id="sidebar" aria-label="Primary">
       <div class="brand">
-        <div class="brand-mark" aria-hidden="true">C</div>
+        <div class="brand-mark" aria-hidden="true"><i data-lucide="graduation-cap"></i></div>
         <div class="brand-copy"><strong>Canvas Hub</strong><small>Learning dashboard</small></div>
         <button class="icon-btn collapse-btn" id="sidebar-toggle" type="button" aria-label="Collapse sidebar" title="Collapse sidebar">«</button>
       </div>
       <nav class="side-nav">
         <p class="nav-label">Workspace</p>
-        <button class="nav-item active" data-view="overview" type="button"><span aria-hidden="true">⌂</span><span class="nav-text">Overview</span></button>
-        <button class="nav-item" data-view="courses" type="button"><span aria-hidden="true">▦</span><span class="nav-text">Courses</span></button>
-        <button class="nav-item" data-view="assignments" type="button"><span aria-hidden="true">✓</span><span class="nav-text">Assignments</span> <i id="missing-nav-count" class="nav-count" hidden></i></button>
-        <button class="nav-item" data-view="grades" type="button"><span aria-hidden="true">▤</span><span class="nav-text">Grades</span></button>
-        <button class="nav-item" data-view="announcements" type="button"><span aria-hidden="true">◉</span><span class="nav-text">Announcements</span></button>
+        <button class="nav-item active" data-view="overview" type="button"><i class="nav-icon" data-lucide="layout-dashboard" aria-hidden="true"></i><span class="nav-text">Overview</span></button>
+        <button class="nav-item" data-view="courses" type="button"><i class="nav-icon" data-lucide="book-open" aria-hidden="true"></i><span class="nav-text">Courses</span></button>
+        <button class="nav-item" data-view="assignments" type="button"><i class="nav-icon" data-lucide="check-square" aria-hidden="true"></i><span class="nav-text">Assignments</span> <i id="missing-nav-count" class="nav-count" hidden></i></button>
+        <button class="nav-item" data-view="grades" type="button"><i class="nav-icon" data-lucide="chart-no-axes-column" aria-hidden="true"></i><span class="nav-text">Grades</span></button>
+        <button class="nav-item" data-view="announcements" type="button"><i class="nav-icon" data-lucide="bell" aria-hidden="true"></i><span class="nav-text">Announcements</span></button>
         <p class="nav-label">Tools</p>
-        <button class="nav-item" data-view="developers" type="button"><span aria-hidden="true">{ }</span><span class="nav-text">API &amp; Developers</span></button>
-        <button class="nav-item" data-view="settings" type="button"><span aria-hidden="true">⚙</span><span class="nav-text">Settings</span></button>
-        <button class="nav-item" data-view="diagnostics" type="button"><span aria-hidden="true">◎</span><span class="nav-text">Diagnostics</span></button>
+        <button class="nav-item" data-view="developers" type="button"><i class="nav-icon" data-lucide="code-2" aria-hidden="true"></i><span class="nav-text">API &amp; Developers</span></button>
+        <button class="nav-item" data-view="settings" type="button"><i class="nav-icon" data-lucide="settings-2" aria-hidden="true"></i><span class="nav-text">Settings</span></button>
+        <button class="nav-item" data-view="diagnostics" type="button"><i class="nav-icon" data-lucide="activity" aria-hidden="true"></i><span class="nav-text">Diagnostics</span></button>
       </nav>
       <div class="sidebar-bottom">
         <div class="connection-indicator">
@@ -38,12 +40,12 @@
             <small id="connection-sub">Connect your Canvas account</small>
           </div>
         </div>
-        <button class="nav-item" id="connect-open" type="button"><span aria-hidden="true">↗</span><span class="nav-text">Connect Canvas</span></button>
+        <button class="nav-item" id="connect-open" type="button"><i class="nav-icon" data-lucide="plug-zap" aria-hidden="true"></i><span class="nav-text">Connect Canvas</span></button>
       </div>
     </aside>
     <div class="main-wrap">
       <header class="topbar">
-        <button class="icon-btn mobile-nav-btn" id="mobile-nav" type="button" aria-label="Open navigation" aria-controls="sidebar">☰</button>
+        <button class="icon-btn mobile-nav-btn" id="mobile-nav" type="button" aria-label="Open navigation" aria-controls="sidebar"><i data-lucide="menu"></i></button>
         <div class="topbar-copy">
           <div class="eyebrow" id="eyebrow">Your school, at a glance</div>
           <h1 id="page-title">Good to see you</h1>
@@ -53,13 +55,13 @@
             <span id="top-status-dot" class="status-dot" aria-hidden="true"></span>
             <span id="top-status-text">Offline</span>
           </div>
-          <button class="icon-btn" id="refresh-btn" type="button" aria-label="Refresh Canvas data" title="Refresh">↻</button>
+          <button class="icon-btn" id="refresh-btn" type="button" aria-label="Refresh Canvas data" title="Refresh"><i data-lucide="refresh-cw"></i></button>
           <button class="avatar" id="profile-avatar" type="button" aria-label="Account" title="Account">?</button>
         </div>
       </header>
       <main id="main" class="main">
         <section id="connect-banner" class="connect-banner">
-          <div class="banner-icon" aria-hidden="true">✦</div>
+          <div class="banner-icon" aria-hidden="true"><i data-lucide="sparkles"></i></div>
           <div class="banner-copy">
             <strong>Connect your Canvas account</strong>
             <p>Use your school’s Canvas URL and an authorized API token. Canvas Hub does not redirect you away for courses, assignments, or grades.</p>
@@ -335,7 +337,7 @@
           <h2 id="connect-title">Connect Canvas</h2>
           <p>Personal access tokens stay in this tab’s session storage and are sent in the POST body to <code>/api/canvas</code>. They are not stored with UI settings. This is not fully secure on a shared computer.</p>
         </div>
-        <button class="icon-btn" type="button" id="connect-close" aria-label="Close">×</button>
+        <button class="icon-btn" type="button" id="connect-close" aria-label="Close"><i data-lucide="x"></i></button>
       </div>
       <label for="canvas-url">Canvas URL</label>
       <input id="canvas-url" type="url" placeholder="https://school.instructure.com" autocomplete="url" required>
@@ -357,7 +359,7 @@
         <div class="eyebrow">Assignment</div>
         <h2 id="asg-dialog-title">Assignment</h2>
       </div>
-      <button class="icon-btn" type="button" id="asg-close" aria-label="Close">×</button>
+      <button class="icon-btn" type="button" id="asg-close" aria-label="Close"><i data-lucide="x"></i></button>
     </div>
     <div id="asg-dialog-body"></div>
     <p class="help-text">Submitting files or taking quizzes still requires Canvas. Those actions are not implemented here.</p>
