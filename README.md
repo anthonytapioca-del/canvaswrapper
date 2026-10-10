@@ -4,11 +4,21 @@ Canvas Hub is a browser dashboard for Canvas LMS, with optional OAuth or a tab-s
 
 ## MMM-CanvasHub MagicMirror² module
 
-1. Deploy Canvas Hub to your domain and copy the `MMM-CanvasHub` directory from this repository into your MagicMirror `modules` directory.
-2. In Canvas Hub, open **API & Developers → MagicMirror widget builder**.
-3. Enter your Canvas HTTPS URL and personal access token, choose the sections, position, and widget accent color, then generate the config object.
-4. Paste the object into the `modules` array in MagicMirror's `config/config.js` and restart MagicMirror.
+Install the **`MMM-CanvasHub`** module from the [`MMM-CanvasHub/` folder in this repository](https://github.com/anthonytapioca-del/canvaswrapper/tree/anthonytapioca-del-understand-codebase/MMM-CanvasHub). For the hosted-widget version currently deployed, run this on your MagicMirror device:
 
-The generated config points to the deployed Canvas Hub domain and contains the access token in plain text on the MagicMirror device. Keep `config.js` private, do not publish it, and use a dedicated token that can be revoked. The module sends credentials and the selected accent color to the hosted widget using `postMessage` with an exact origin target; the widget keeps credentials in memory and posts them to Canvas Hub's allowlisted `/api/canvas` proxy when refreshing. Credentials are not put in the widget URL or stored on the Hub. The module refreshes every 15 minutes and limits data loading to the first 20 active courses. Missing assignments are ordered by due date, newest first, and the widget displays at most three with their assignment and course names.
+```bash
+cd ~/MagicMirror/modules
+git clone --depth 1 --branch anthonytapioca-del-understand-codebase https://github.com/anthonytapioca-del/canvaswrapper.git /tmp/canvaswrapper
+cp -R /tmp/canvaswrapper/MMM-CanvasHub ./MMM-CanvasHub
+```
 
-The widget page is framed only at `/widget.html`; the main Canvas Hub app remains protected from framing. The hosted page uses Canvas endpoints for active courses, enrollment grades, submissions, and announcements according to the selected sections.
+Then:
+
+1. In a browser, open [Canvas Hub](https://canvaswrapper.vercel.app/) and go to **API & Developers → MagicMirror widget builder**.
+2. Create a Canvas access token in your Canvas account settings (usually **Account → Settings → Approved Integrations → + New Access Token**). If your school manages Canvas, token creation may be disabled; ask your Canvas administrator.
+3. In the builder, enter your Canvas site URL (for example, `https://school.instructure.com`) and token. Select grades, missing work, and/or announcements, then choose the position and accent color.
+4. Click **Generate config** and copy the generated object.
+5. On the MagicMirror device, open `~/MagicMirror/config/config.js`. Paste the copied object as an entry inside the `modules: [ ... ]` array, keeping commas between entries. The generated entry uses `module: "MMM-CanvasHub"`; do not rename it.
+6. Save the file and restart MagicMirror using your normal method (for example, `pm2 restart mm` if you run it with PM2). The mirror needs internet access to load the hosted widget.
+
+The config contains your access token in plain text on the MagicMirror device. Keep `config.js` private, do not publish it, and use a dedicated token that can be revoked. Credentials stay in the local config until refresh, are sent to the hosted widget in memory, and are posted to Canvas Hub's allowlisted `/api/canvas` proxy; they are not included in the widget URL or stored on Canvas Hub. The module refreshes every 15 minutes, checks up to 20 active courses, and displays at most the three most recently due missing assignments.
