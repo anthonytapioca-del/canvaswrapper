@@ -1,5 +1,6 @@
 Module.register("MMM-CanvasHub", {
   defaults: {
+    canvasHubUrl: "",
     canvasUrl: "",
     accessToken: "",
     showGrades: true,
@@ -9,131 +10,59 @@ Module.register("MMM-CanvasHub", {
   },
 
   start() {
-    this.data = null;
-    this.error = null;
-    this.warning = null;
-    this.loaded = false;
-    this.requestData();
-    this.updateTimer = setInterval(() => this.requestData(), this.config.updateInterval);
+    this.hubOrigin = this.getHubOrigin();
+    this.handleWidgetMessage = this.handleWidgetMessage.bind(this);
+    window.addEventListener("message", this.handleWidgetMessage);
   },
 
   stop() {
-    clearInterval(this.updateTimer);
+    window.removeEventListener("message", this.handleWidgetMessage);
   },
 
-  getStyles() {
-    return ["MMM-CanvasHub.css"];
+  getHubOrigin() {
+    try {
+      const url = new URL(this.config.canvasHubUrl);
+      if (url.protocol !== "https:" && url.hostname !== "localhost") return null;
+      return url.origin;
+    } catch {
+      return null;
+    }
   },
 
-  requestData() {
-    this.sendSocketNotification("CANVASHUB_FETCH", {
+  handleWidgetMessage(event) {
+    if (!this.iframe || event.source !== this.iframe.contentWindow || event.origin !== this.hubOrigin) return;
+    if (!event.data || event.data.type !== "CANVASHUB_READY") return;
+    this.iframe.contentWindow.postMessage({
+      type: "CANVASHUB_CONFIG",
       canvasUrl: this.config.canvasUrl,
       accessToken: this.config.accessToken,
       showGrades: this.config.showGrades,
       showMissing: this.config.showMissing,
-      showAnnouncements: this.config.showAnnouncements
-    });
-  },
-
-  socketNotificationReceived(notification, payload) {
-    if (notification !== "CANVASHUB_DATA") return;
-    this.loaded = true;
-    this.error = payload.error || null;
-    this.warning = payload.warning || null;
-    this.data = payload.data || null;
-    this.updateDom(300);
+      showAnnouncements: this.config.showAnnouncements,
+      updateInterval: this.config.updateInterval
+    }, this.hubOrigin);
   },
 
   getDom() {
     const wrapper = document.createElement("div");
-    wrapper.className = "canvas-hub-widget";
-    const title = document.createElement("header");
-    title.className = "canvas-hub-title";
-    title.textContent = "Canvas Hub";
-    wrapper.appendChild(title);
-
-    if (!this.loaded) {
-      wrapper.appendChild(this.makeText("Loading Canvas data…", "dimmed"));
+    wrapper.className = "canvas-hub-frame-wrap";
+    if (!this.hubOrigin) {
+      wrapper.textContent = "Set canvasHubUrl to the HTTPS origin of your deployed Canvas Hub.";
       return wrapper;
     }
-    if (this.error) {
-      wrapper.appendChild(this.makeText(this.error, "canvas-hub-error"));
-      return wrapper;
-    }
-    if (!this.data) {
-      wrapper.appendChild(this.makeText("No Canvas data returned.", "dimmed"));
-      return wrapper;
-    }
-
-    if (this.config.showGrades) this.renderGrades(wrapper, this.data.grades);
-    if (this.config.showMissing) this.renderMissing(wrapper, this.data.missing);
-    if (this.config.showAnnouncements) this.renderAnnouncements(wrapper, this.data.announcements);
-    if (this.warning) wrapper.appendChild(this.makeText(this.warning, "dimmed"));
+    const frame = document.createElement("iframe");
+    frame.title = "Canvas Hub MagicMirror widget";
+    frame.src = `${this.hubOrigin}/widget.html`;
+    frame.loading = "eager";
+    frame.referrerPolicy = "no-referrer";
+    frame.sandbox = "allow-scripts allow-same-origin";
+    frame.style.width = "min(430px, 90vw)";
+    frame.style.height = `${Math.max(360, Math.min(1000, Number(this.config.widgetHeight) || 720))}px`;
+    frame.style.border = "0";
+    frame.style.borderRadius = "16px";
+    frame.style.overflow = "hidden";
+    this.iframe = frame;
+    wrapper.appendChild(frame);
     return wrapper;
-  },
-
-  makeText(text, className) {
-    const element = document.createElement("div");
-    element.className = className;
-    element.textContent = text;
-    return element;
-  },
-
-  addSection(parent, label) {
-    const section = document.createElement("section");
-    section.className = "canvas-hub-section";
-    const heading = document.createElement("div");
-    heading.className = "canvas-hub-section-title";
-    heading.textContent = label;
-    section.appendChild(heading);
-    parent.appendChild(section);
-    return section;
-  },
-
-  renderGrades(parent, grades) {
-    const section = this.addSection(parent, "Grades");
-    if (!grades.length) {
-      section.appendChild(this.makeText("No published grades.", "dimmed"));
-      return;
-    }
-    grades.slice(0, 8).forEach((grade) => {
-      const row = document.createElement("div");
-      row.className = "canvas-hub-row";
-      row.appendChild(this.makeText(grade.courseName, "canvas-hub-course"));
-      row.appendChild(this.makeText(grade.score, "canvas-hub-value"));
-      section.appendChild(row);
-    });
-  },
-
-  renderMissing(parent, missing) {
-    const section = this.addSection(parent, `Missing (${missing.length})`);
-    if (!missing.length) {
-      section.appendChild(this.makeText("No missing assignments.", "dimmed"));
-      return;
-    }
-    missing.slice(0, 8).forEach((assignment) => {
-      const row = document.createElement("div");
-      row.className = "canvas-hub-item";
-      row.appendChild(this.makeText(assignment.name, "canvas-hub-course"));
-      row.appendChild(this.makeText(`${assignment.courseName}${assignment.dueAt ? ` · Due ${assignment.dueAt}` : ""}`, "dimmed"));
-      section.appendChild(row);
-    });
-  },
-
-  renderAnnouncements(parent, announcements) {
-    const section = this.addSection(parent, "Announcements");
-    if (!announcements.length) {
-      section.appendChild(this.makeText("No recent announcements.", "dimmed"));
-      return;
-    }
-    announcements.slice(0, 5).forEach((announcement) => {
-      const item = document.createElement("div");
-      item.className = "canvas-hub-item";
-      item.appendChild(this.makeText(announcement.title, "canvas-hub-course"));
-      const date = announcement.postedAt ? new Date(announcement.postedAt).toLocaleDateString() : "";
-      item.appendChild(this.makeText(`${announcement.courseName}${date ? ` · ${date}` : ""}`, "dimmed"));
-      if (announcement.message) item.appendChild(this.makeText(announcement.message, "canvas-hub-message"));
-      section.appendChild(item);
-    });
   }
 });

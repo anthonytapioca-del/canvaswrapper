@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#0b1220">
+  <title>Canvas Hub Widget</title>
+  <link rel="stylesheet" href="./widget/widget.css">
+</head>
+<body>
+  <main class="widget-shell" aria-live="polite">
+    <header class="widget-header">
+      <div class="brand-mark" aria-hidden="true">C</div>
+      <div>
+        <p class="eyebrow">Canvas Hub</p>
+        <h1>Your school, at a glance</h1>
+      </div>
+      <span id="status" class="status">Connecting</span>
+    </header>
+    <section id="welcome" class="welcome-card">
+      <p class="eyebrow">MagicMirror widget</p>
+      <h2>Loading your Canvas snapshot</h2>
+      <p>Your credentials stay in the local MagicMirror config and are sent securely to Canvas Hub only to refresh your selected data.</p>
+    </section>
+    <div id="alert" class="alert hidden" role="status"></div>
+    <section id="summary" class="summary-grid hidden" aria-label="Canvas summary"></section>
+    <div id="sections" class="sections"></div>
+    <footer class="widget-footer">
+      <span id="updated">Waiting for MagicMirror configuration</span>
+      <span class="footer-brand"><span class="pulse"></span> Private connection</span>
+    </footer>
+  </main>
+  <script type="module" src="./widget/widget.js"></script>
+</body>
+</html>

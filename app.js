@@ -693,7 +693,14 @@ function generateMagicMirrorConfig() {
   const config = {
     module: "MMM-CanvasHub",
     position: $("mm-position").value,
-    config: { canvasUrl: origin, accessToken, showGrades, showMissing, showAnnouncements }
+    config: {
+      canvasHubUrl: location.origin,
+      canvasUrl: origin,
+      accessToken,
+      showGrades,
+      showMissing,
+      showAnnouncements
+    }
   };
   $("mm-generated-code").textContent = JSON.stringify(config, null, 2);
   $("mm-generated-wrap").classList.remove("hidden");

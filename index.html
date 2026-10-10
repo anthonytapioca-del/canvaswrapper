@@ -221,7 +221,7 @@
           <div id="docs-list" class="docs-list"></div>
           <section class="panel magicmirror-panel">
             <h3>MagicMirror widget builder</h3>
-            <p class="help-text">Create a config entry for the MMM-CanvasHub module. The Canvas URL and token are included in the generated snippet so they stay on the MagicMirror device; they are not saved by Canvas Hub or placed in a URL.</p>
+            <p class="help-text">Create a MagicMirror config entry that loads the widget from this Canvas Hub domain. The Canvas URL and token stay in the local MagicMirror config and are sent to the Hub API only when refreshing data. They are never placed in the widget URL or stored on the Hub.</p>
             <label for="mm-canvas-url">Canvas URL</label>
             <input id="mm-canvas-url" type="url" placeholder="https://school.instructure.com" autocomplete="url">
             <label for="mm-canvas-token">Canvas API access token</label>
@@ -253,7 +253,7 @@
                 <button class="secondary-btn" id="copy-mm-config" type="button">Copy config</button>
               </div>
             </div>
-            <p class="help-text">Install the <code>MMM-CanvasHub</code> folder from this repository into your MagicMirror's <code>modules</code> directory, add the generated object to your <code>modules</code> array, then restart MagicMirror.</p>
+            <p class="help-text">Install the <code>MMM-CanvasHub</code> folder from this repository into your MagicMirror's <code>modules</code> directory, add the generated object to your <code>modules</code> array, then restart MagicMirror. The module loads <code>/widget.html</code> from the domain shown in the generated config.</p>
           </section>
           <section class="panel generator-panel">
             <h3>Generate a personalized link</h3>
