@@ -1,4 +1,10 @@
 Module.register("MMM-CanvasHub", {
+  limits: {
+    grades: 4,
+    missing: 3,
+    announcements: 3
+  },
+
   defaults: {
     canvasUrl: "",
     accessToken: "",
@@ -65,10 +71,13 @@ Module.register("MMM-CanvasHub", {
       return wrapper;
     }
 
-    if (this.config.showGrades) this.renderGrades(wrapper, this.data.grades);
-    if (this.config.showMissing) this.renderMissing(wrapper, this.data.missing);
-    if (this.config.showAnnouncements) this.renderAnnouncements(wrapper, this.data.announcements);
-    if (this.warning) wrapper.appendChild(this.makeText(this.warning, "dimmed"));
+    const content = document.createElement("div");
+    content.className = "canvas-hub-content";
+    if (this.config.showGrades) this.renderGrades(content, this.data.grades);
+    if (this.config.showMissing) this.renderMissing(content, this.data.missing);
+    if (this.config.showAnnouncements) this.renderAnnouncements(content, this.data.announcements);
+    wrapper.appendChild(content);
+    if (this.warning) wrapper.appendChild(this.makeText(this.warning, "dimmed canvas-hub-warning"));
     return wrapper;
   },
 
@@ -91,12 +100,12 @@ Module.register("MMM-CanvasHub", {
   },
 
   renderGrades(parent, grades) {
-    const section = this.addSection(parent, "Grades");
+    const section = this.addSection(parent, `Grades${grades.length ? ` · ${grades.length}` : ""}`);
     if (!grades.length) {
       section.appendChild(this.makeText("No published grades.", "dimmed"));
       return;
     }
-    grades.slice(0, 8).forEach((grade) => {
+    grades.slice(0, this.limits.grades).forEach((grade) => {
       const row = document.createElement("div");
       row.className = "canvas-hub-row";
       row.appendChild(this.makeText(grade.courseName, "canvas-hub-course"));
@@ -111,7 +120,7 @@ Module.register("MMM-CanvasHub", {
       section.appendChild(this.makeText("No missing assignments.", "dimmed"));
       return;
     }
-    missing.slice(0, 8).forEach((assignment) => {
+    missing.slice(0, this.limits.missing).forEach((assignment) => {
       const row = document.createElement("div");
       row.className = "canvas-hub-item";
       row.appendChild(this.makeText(assignment.name, "canvas-hub-course"));
@@ -121,12 +130,12 @@ Module.register("MMM-CanvasHub", {
   },
 
   renderAnnouncements(parent, announcements) {
-    const section = this.addSection(parent, "Announcements");
+    const section = this.addSection(parent, `Announcements${announcements.length ? ` · ${announcements.length}` : ""}`);
     if (!announcements.length) {
       section.appendChild(this.makeText("No recent announcements.", "dimmed"));
       return;
     }
-    announcements.slice(0, 5).forEach((announcement) => {
+    announcements.slice(0, this.limits.announcements).forEach((announcement) => {
       const item = document.createElement("div");
       item.className = "canvas-hub-item";
       item.appendChild(this.makeText(announcement.title, "canvas-hub-course"));

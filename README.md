@@ -11,4 +11,6 @@ Canvas Hub is a browser dashboard for Canvas LMS, with optional OAuth or a tab-s
 
 The generated config contains the access token in plain text on the MagicMirror device. Keep `config.js` private, do not publish it, and use a dedicated token that can be revoked. The token is sent directly from the MagicMirror server to Canvas over HTTPS; it is not sent to or stored by Canvas Hub. The module refreshes every 15 minutes and limits data loading to the first 30 active courses.
 
+The widget uses a transparent, compact two-column layout and shows up to four grades, three missing assignments, and three announcements at a time to keep the display within one view without an internal scrollbar.
+
 The module requires a MagicMirror² version running on Node.js 18 or later (for built-in `fetch`). It uses Canvas endpoints for active courses, enrollment grades, submissions, and announcements according to the selected sections.
