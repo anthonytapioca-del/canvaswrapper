@@ -28,6 +28,18 @@ function displayDate(value) {
   return Number.isNaN(date.getTime()) ? "" : date.toLocaleDateString(undefined, { month: "short", day: "numeric" });
 }
 
+function mostRecentlyDue(assignments) {
+  return [...assignments]
+    .sort((a, b) => {
+      const aDue = a.dueAt ? new Date(a.dueAt).getTime() : Number.NEGATIVE_INFINITY;
+      const bDue = b.dueAt ? new Date(b.dueAt).getTime() : Number.NEGATIVE_INFINITY;
+      const validADue = Number.isFinite(aDue) ? aDue : Number.NEGATIVE_INFINITY;
+      const validBDue = Number.isFinite(bDue) ? bDue : Number.NEGATIVE_INFINITY;
+      return validBDue - validADue;
+    })
+    .slice(0, 3);
+}
+
 async function canvasRequest(path) {
   const response = await fetch("/api/canvas", {
     method: "POST",
@@ -92,9 +104,10 @@ function renderGrades(grades) {
 
 function renderMissing(assignments) {
   if (!state.config.showMissing) return "";
+  const recent = mostRecentlyDue(assignments);
   return `<section class="widget-section">
-    <div class="section-heading"><div><p class="eyebrow">Needs attention</p><h2>Missing assignments</h2></div><span class="section-count ${assignments.length ? "alert-count" : ""}">${assignments.length}</span></div>
-    ${assignments.length ? `<div class="data-list">${assignments.slice(0, 8).map((assignment) => `
+    <div class="section-heading"><div><p class="eyebrow">3 most recently due</p><h2>Missing assignments</h2></div><span class="section-count ${assignments.length ? "alert-count" : ""}">${assignments.length}</span></div>
+    ${recent.length ? `<div class="data-list">${recent.map((assignment) => `
       <article class="data-row">
         <span class="course-dot rose-dot" aria-hidden="true">!</span>
         <span class="row-copy"><strong>${escapeHtml(assignment.name)}</strong><small>${escapeHtml(assignment.courseName)}</small></span>
